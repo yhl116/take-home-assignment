@@ -10,6 +10,7 @@ build/Release
 
 # Dependency directories
 node_modules/
+*/venv/
 
 # TypeScript v1 declaration files
 typings/
