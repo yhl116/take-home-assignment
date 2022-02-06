@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
-import styles from "./App.module.css";
+import styles from "./TrackList.module.css";
 
-import TrackRow from "./components/TrackRow";
-import AudioPlayer from "./components/AudioPlayer";
+import TrackRow from "./TrackRow";
+import AudioPlayer from "./AudioPlayer";
 
-function App() {
+function TrackList() {
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState();
 
+  const {url} = this.prop;
+
   useEffect(() => {
-    fetch("http://localhost:8000/tracks")
+    fetch(url)
       .then((res) => res.json())
       .then((data) => setTracks(data));
   }, []);
 
   const handlePlay = (track) => setCurrentTrack(track);
 
-  // what is ix?
   return (
     <>
       <main className={styles.app}>
@@ -29,4 +30,4 @@ function App() {
   );
 }
 
-export default App;
+export default TrackList;

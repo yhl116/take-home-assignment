@@ -1,25 +1,31 @@
 import React, { useState, useEffect } from "react";
-import styles from "./App.module.css";
+import { useParams } from "react-router";
+// import styles from "./Playlist.module.css";
 
-import TrackRow from "./components/TrackRow";
-import AudioPlayer from "./components/AudioPlayer";
+import TrackRow from "./TrackRow";
+import AudioPlayer from "./AudioPlayer";
 
 function App() {
+  const playlistId = useParams();
+
   const [tracks, setTracks] = useState([]);
   const [currentTrack, setCurrentTrack] = useState();
+  
+  // const {playlistId} = this.prop;
+  const url = "http://localhost:8000/playlists/" + playlistId;
+  // const url = "http://localhost:8000/tracks"
 
   useEffect(() => {
-    fetch("http://localhost:8000/tracks")
+    fetch(url)
       .then((res) => res.json())
-      .then((data) => setTracks(data));
+      .then((data) => setTracks(data.tracks_data));
   }, []);
 
   const handlePlay = (track) => setCurrentTrack(track);
 
-  // what is ix?
   return (
     <>
-      <main className={styles.app}>
+      <main>
         {tracks.map((track, ix) => (
           <TrackRow key={ix} track={track} handlePlay={handlePlay} />
         ))}

@@ -27,3 +27,8 @@
 .trackArtist {
   color: #767676;
 }
+
+.activeButton {
+  position: absolute;
+  right: 100px;
+}
