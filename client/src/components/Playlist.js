@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
-// import styles from "./Playlist.module.css";
 
-import TrackRow from "./TrackRow";
 import AudioPlayer from "./AudioPlayer";
+import PlaylistTrackRow from "./PlaylistTrackRow";
 
 function App() {
   const playlistId = useParams();
 
-  const [tracks, setTracks] = useState([]);
+  const [currentPlaylist, setCurrentPlaylist] = useState([]);
   const [currentTrack, setCurrentTrack] = useState();
   
-  // const {playlistId} = this.prop;
   const url = "http://localhost:8000/playlists/" + playlistId;
-  // const url = "http://localhost:8000/tracks"
 
   useEffect(() => {
     fetch(url)
       .then((res) => res.json())
-      .then((data) => setTracks(data.tracks_data));
+      .then((data) => setCurrentPlaylist(data));
   }, []);
 
   const handlePlay = (track) => setCurrentTrack(track);
@@ -26,8 +23,8 @@ function App() {
   return (
     <>
       <main>
-        {tracks.map((track, ix) => (
-          <TrackRow key={ix} track={track} handlePlay={handlePlay} />
+        {currentPlaylist.tracks_info.map((track, ix) => (
+          <PlaylistTrackRow key={ix} track={track} handlePlay={handlePlay} input_playlist={currentPlaylist.name}/>
         ))}
       </main>
       {currentTrack && <AudioPlayer track={currentTrack} />}
