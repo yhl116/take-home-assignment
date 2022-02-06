@@ -51,22 +51,22 @@ class PlaylistViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request):
         operation = request.get("operation")
-        playlist_id = request.get("playlist_id")
-        track_id = request.get("playlist_id")
+        playlist_name = request.get("playlist_name")
+        track_id = request.get("track_id")
 
-        queryset = models.Playlist.objects.filter(pk=playlist_id)
+        queryset = models.Playlist.objects.filter(name=playlist_name)
         serializer = serializers.PlaylistSerializer(queryset)
 
         if operation == "add":
             if not track_id in serializer.tracks:
                 updated_tracks = serializer.tracks + [track_id]
-                serializers.PlaylistSerializer(playlist_id, tracks=updated_tracks, partial=True)
+                serializers.PlaylistSerializer(serializer.id, tracks=updated_tracks, partial=True)
                 return Response(status=status.HTTP_202_ACCEPTED)
 
         if operation == "remove":
             if track_id in serializer.tracks:
                 updated_tracks = serializer.tracks.remove(track_id)
-                serializers.PlaylistSerializer(playlist_id, tracks=updated_tracks, partial=True)
+                serializers.PlaylistSerializer(serializer.id, tracks=updated_tracks, partial=True)
                 return Response(status=status.HTTP_202_ACCEPTED)
 
         return Response({'message': 'Invalid update operation.'}, status=status.HTTP_400_BAD_REQUEST)

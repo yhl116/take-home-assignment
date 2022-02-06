@@ -1,17 +1,26 @@
-import React from "react";
+import React, {useState} from "react";
 import styles from "./TrackRow.module.css";
 
-// function sideFunction() {
-//   return(
-//     <form className={styles.createPlaylistInput} onSubmit={this.handleSubmit}>
-//       <label for="createPlaylist">New Playlist:</label>
-//       <input type="text" name="createPlaylist" onChange={this.handleChange}/>
-//       <input type="submit" className="createButton" value="Create"/>
-//     </form>
-//   )
-// }
-
 function TrackRow({ track, handlePlay }) {
+  const [playlist, setPlaylist] = useState();
+
+  const handleSubmit = (track_id) => {
+    const requestOptions = {
+      method: "update",
+      operation: "add",
+      playlist_name: playlist,
+      track_id: track_id
+    };
+
+    const url = `http://localhost:8000/playlists/`;
+
+    fetch(url, requestOptions);
+  }
+
+  const handleChange = (event) => {
+    setPlaylist(event.target.value);
+  }
+
   return (
     <div className={styles.trackRow}>
       <button className={styles.trackPlay} onClick={() => handlePlay(track)}>
@@ -31,7 +40,11 @@ function TrackRow({ track, handlePlay }) {
           {track.main_artists.join(", ")}
         </div>
       </div>
-      {/* {this.sideFunction()} */}
+      <form className={styles.addPlaylistInput} onSubmit={() => handleSubmit(track.id)}>
+        <label for="createPlaylist">Add to Playlist:</label>
+        <input type="text" name="createPlaylist" onChange={handleChange}/>
+        <input type="submit" className="createButton" value="Add"/>
+      </form>
     </div>
   );
 }
