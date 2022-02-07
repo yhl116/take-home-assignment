@@ -2,11 +2,11 @@ import React from "react";
 import styles from "./PlaylistRow.module.css";
 import { NavLink } from "react-router-dom";
 
-function deletePlaylist(playlistId) {
+function deletePlaylist(playlistName) {
   const requestOptions = {
     method:"delete"
   }
-  const url = `http://localhost:8000/playlists/${playlistId}`
+  const url = `http://localhost:8000/playlists/${playlistName}`
   fetch(url, requestOptions)
 }
 
@@ -20,7 +20,7 @@ function PlaylistRow({ playlist }) {
             {playlist.name}
         </NavLink>
       </div>
-      <button className={styles.activeButton} onclick={() => deletePlaylist(playlist.id)}>delete</button>
+      <button className={styles.activeButton} onclick={() => deletePlaylist(playlist.name)}>delete</button>
     </div>
   );
 }

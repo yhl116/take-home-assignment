@@ -4,7 +4,7 @@ import { useParams } from "react-router";
 import AudioPlayer from "./AudioPlayer";
 import PlaylistTrackRow from "./PlaylistTrackRow";
 
-function App() {
+function Playlist() {
   const playlistId = useParams();
 
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
@@ -32,4 +32,4 @@ function App() {
   );
 }
 
-export default App;
+export default Playlist;
