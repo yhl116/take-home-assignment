@@ -5,7 +5,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r"tracks", views.TrackViewSet)
-router.register(r"playlists", views.PlaylistViewSet)
+router.register(r"playlists", views.PlaylistViewSet, basename="Playlist")
 
 urlpatterns = [
     path("", include(router.urls)),
