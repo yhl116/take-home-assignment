@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
 class Artist(models.Model):
@@ -51,6 +52,5 @@ class Track(models.Model):
 
 
 class Playlist(models.Model):
-    id = models.CharField(primary_key=True, max_length=10)
     name =  models.CharField(max_length=200, null=False)
-    tracks = models.ManyToManyField(Track, related_name="playlist_tracks")
+    tracks = ArrayField(models.CharField(max_length=10), blank=True)

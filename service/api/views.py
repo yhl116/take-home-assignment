@@ -18,7 +18,10 @@ class PlaylistViewSet(viewsets.ModelViewSet):
         destroy: Inherit from super. Deletes a playlist.
     """
 
-    def list(self):
+    serializer_class = serializers.PlaylistSerializer
+    queryset = models.Playlist.objects.all()
+
+    def list(self, request):
         queryset = models.Playlist.objects.all()
         serializer = serializers.PlaylistSerializer(queryset, many=True)
         return Response(serializer.data)
