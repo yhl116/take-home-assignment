@@ -1,5 +1,6 @@
 from rest_framework import permissions, viewsets, status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 from . import models, serializers
 
@@ -18,58 +19,36 @@ class PlaylistViewSet(viewsets.ModelViewSet):
         destroy: Inherit from super. Deletes a playlist.
     """
 
-    serializer_class = serializers.PlaylistSerializer
+    serializer_class = serializers.GetPlaylistSerializer
     queryset = models.Playlist.objects.all()
 
-    def list(self, request):
-        queryset = models.Playlist.objects.all()
-        serializer = serializers.PlaylistSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def create(self, request):
+        serializer = serializers.PostPlaylistSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-
-    def retrieve(self, playlist_id):
-        """Gets playlist data and data of tracks in playlist.
-
-        Args:
-            playlist_id (int): Playlist primary key.
-
-        Returns:
-            dict: Playlist data with data of all its tracks.
-        """
-
-        # get playlist from playlist id
-        playlist_queryset = models.Playlist.objects.filter(pk=playlist_id)
-        playlist_serializer = serializers.PlaylistSerializer(playlist_queryset)
-        playlist_data = playlist_serializer.data
-
-        # get tracks in playlist
-        track_queryset = models.Playlist.objects.filter(pk__in=playlist_data.tracks)
-        track_serializer = serializers.TrackSerializer(track_queryset)
-
-        # add tracks data into playlist
-        playlist_data["tracks_data"] = track_serializer.data
-        
-        return Response(playlist_data)
-
-
-    def partial_update(self, request):
-        operation = request.get("operation")
-        playlist_name = request.get("playlist_name")
-        track_id = request.get("track_id")
-
-        queryset = models.Playlist.objects.filter(name=playlist_name)
-        serializer = serializers.PlaylistSerializer(queryset)
+    def partial_update(self, request, pk=None):
+        operation = request.data.get("operation", "")
 
         if operation == "add":
-            if not track_id in serializer.tracks:
-                updated_tracks = serializer.tracks + [track_id]
-                serializers.PlaylistSerializer(serializer.id, tracks=updated_tracks, partial=True)
-                return Response(status=status.HTTP_202_ACCEPTED)
+            if "track_id" in request.data and "playlist_name" in request.data:
+                playlist = get_object_or_404(models.Playlist, name=request.data.get("playlist_name", ""))
+                track = get_object_or_404(models.Track, pk=request.data.get("track_id", ""))
 
-        if operation == "remove":
-            if track_id in serializer.tracks:
-                updated_tracks = serializer.tracks.remove(track_id)
-                serializers.PlaylistSerializer(serializer.id, tracks=updated_tracks, partial=True)
+                playlist.tracks.add(track)
+                playlist.save()
+                return Response({"success": True}, status=status.HTTP_202_ACCEPTED)
+
+        if operation == "remove":  
+            if "track_id" in request.data and "playlist_name" in request.data:
+                playlist = get_object_or_404(models.Playlist, name=request.data.get("playlist_name", ""))
+                track = get_object_or_404(models.Track, pk=request.data.get("track_id", ""))
+
+                playlist.tracks.remove(track)
+                playlist.save()
                 return Response(status=status.HTTP_202_ACCEPTED)
 
         return Response({'message': 'Invalid update operation.'}, status=status.HTTP_400_BAD_REQUEST)
