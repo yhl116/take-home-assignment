@@ -53,4 +53,4 @@ class Track(models.Model):
 
 class Playlist(models.Model):
     name =  models.CharField(max_length=200, null=False)
-    tracks = ArrayField(models.CharField(max_length=10), blank=True)
+    tracks = models.ManyToManyField(Track, related_name="playlist_tracks", blank=True, default=None)
