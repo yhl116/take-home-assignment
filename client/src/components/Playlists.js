@@ -1,65 +1,62 @@
-import React from "react";
-import PlaylistRow from "./PlaylistRow"
+import React, { useState, useEffect } from "react";
+import PlaylistRow from "./PlaylistRow";
 import styles from "./Playlists.module.css";
 
-class Playlists extends React.Component {
-  playlists = [
-    {
-      name: "PL1",
-      id: 1
-    }, {
-      name: "PL2",
-      id: 2
-    }
-  ];
+function Playlists() {
+  const [playlists, setPlaylists] = useState([]);
+  const [newPlaylist, setNewPlaylist] = useState();
 
-  constructor(props) {
-    // useEffect(() => {
-    //   fetch("http://localhost:8000/playlists")
-    //     .then((res) => res.json())
-    //     .then((data) => setPlaylists(data.tracks_info));
-    // }, []);
-    
-    super(props);
-    this.state = {newPlaylist: ''};
+  useEffect(() => {
+    fetchPlaylists();
+  }, []);
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  const fetchPlaylists = () => {
+    fetch("http://localhost:8000/playlists")
+      .then((res) => res.json())
+      .then((data) => setPlaylists(data));
   }
 
-  handleChange(event) {
-    this.setState({newPlaylist: event.target.value});
+  const handleChange = (e) => {
+    setNewPlaylist(e.target.value);
   }
 
-  handleSubmit() {
-    const {newPlaylist} = this.state;
-    const requestOptions = {
-      method: "post",
-      playlist: {
-        name: newPlaylist,
-        tracks: []
-      }
-    }
+  const handleSubmit = (track_id) => {
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-    fetch("http://localhost:8000/playlists", requestOptions);
+    let raw = JSON.stringify({
+      "name": newPlaylist,
+      "tracks": []
+    });
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:8000/playlists/", requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .then(() => fetchPlaylists())
+      .catch(error => console.log('error', error))
   }
 
-  render() {
-    return (
-      <>
-        <main>
-          {this.playlists.map((playlist) => (
-            <PlaylistRow playlist={playlist} />
-          ))}
-          <form className={styles.createPlaylistInput} onSubmit={this.handleSubmit}>
-            <label for="createPlaylist">New Playlist:</label>
-            <input type="text" name="createPlaylist" onChange={this.handleChange}/>
-            <input type="submit" className="createButton" value="Create"/>
-          </form>
-        </main>
-      </>
-    );
-  }
+  return (
+    <>
+      <main>
+        {playlists.map((playlist) => (
+          <PlaylistRow key={playlist.id} playlist={playlist} refreshPlaylists={fetchPlaylists}/>
+        ))}
+        <div className={styles.createPlaylistInput}>
+          <label>New Playlist:</label>
+          <input type="text" name="createPlaylist" onChange={handleChange}/>
+          <button className="createButton" value="Create" onClick={handleSubmit}>Create</button>
+        </div>
+      </main>
+    </>
+  );
 }
 
 export default Playlists;

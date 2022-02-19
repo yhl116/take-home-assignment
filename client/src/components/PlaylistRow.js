@@ -2,16 +2,22 @@ import React from "react";
 import styles from "./PlaylistRow.module.css";
 import { NavLink } from "react-router-dom";
 
-function deletePlaylist(playlistName) {
+function deletePlaylist(playlistId, callback) {
   const requestOptions = {
-    method:"delete"
-  }
-  const url = `http://localhost:8000/playlists/${playlistName}`
+    method: 'DELETE',
+    redirect: 'follow'
+  };
+
+  const url = `http://localhost:8000/playlists/${playlistId}`
+  
   fetch(url, requestOptions)
+    .then(response => response.text())
+    .then(() => callback())
+    .catch(error => console.log('error', error));
 }
 
-function PlaylistRow({ playlist }) {
-  const link = `/playlists/${playlist.name}`;
+function PlaylistRow({ playlist, refreshPlaylists }) {
+  const link = `/playlists/${playlist.id}`;
 
   return (
     <div className={styles.trackRow}>
@@ -20,7 +26,8 @@ function PlaylistRow({ playlist }) {
             {playlist.name}
         </NavLink>
       </div>
-      <button className={styles.activeButton} onclick={() => deletePlaylist(playlist.name)}>delete</button>
+      {/* <button className={styles.activeButton} onClick={() => printStuff(refresh, fetchPlaylists)}>delete</button> */}
+      <button className={styles.activeButton} onClick={() => deletePlaylist(playlist.id, refreshPlaylists)}>delete</button>
     </div>
   );
 }

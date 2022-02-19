@@ -2,23 +2,33 @@ import React, {useState} from "react";
 import styles from "./TrackRow.module.css";
 
 function TrackRow({ track, handlePlay }) {
-  const [playlist, setPlaylist] = useState();
+  const [inputPlaylist, setInputPlaylist] = useState();
 
   const handleSubmit = (track_id) => {
-    const requestOptions = {
-      method: "update",
-      operation: "add",
-      playlist_name: playlist,
-      track_id: track_id
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    let raw = JSON.stringify({
+      "operation": "add",
+      "track_id": track_id,
+      "playlist_name": inputPlaylist
+    });
+
+    let requestOptions = {
+      method: 'PATCH',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
     };
 
-    const url = `http://localhost:8000/playlists/`;
-
-    fetch(url, requestOptions);
+    fetch("http://localhost:8000/playlists/p/", requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
   }
 
   const handleChange = (event) => {
-    setPlaylist(event.target.value);
+    setInputPlaylist(event.target.value);
   }
 
   return (
@@ -40,11 +50,11 @@ function TrackRow({ track, handlePlay }) {
           {track.main_artists.join(", ")}
         </div>
       </div>
-      <form className={styles.addPlaylistInput} onSubmit={() => handleSubmit(track.id)}>
-        <label for="createPlaylist">Add to Playlist:</label>
+      <div className={styles.addPlaylistInput}>
+        <label>Add to Playlist:</label>
         <input type="text" name="createPlaylist" onChange={handleChange}/>
-        <input type="submit" className="createButton" value="Add"/>
-      </form>
+        <button className="createButton" onClick={() => handleSubmit(track.id)}>Add</button>
+      </div>
     </div>
   );
 }

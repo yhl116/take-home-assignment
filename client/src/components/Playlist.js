@@ -5,26 +5,42 @@ import AudioPlayer from "./AudioPlayer";
 import PlaylistTrackRow from "./PlaylistTrackRow";
 
 function Playlist() {
-  const playlistId = useParams();
+  const params = useParams();
+  const {playlistId} = params;
 
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
   const [currentTrack, setCurrentTrack] = useState();
   
-  const url = "http://localhost:8000/playlists/" + playlistId;
-
   useEffect(() => {
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => setCurrentPlaylist(data));
-  }, []);
+    refreshPlaylist(playlistId);
+  }, [playlistId]);
+
+  const refreshPlaylist = (playlistId) => {
+    const requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    fetch(`http://localhost:8000/playlists/${playlistId}/`, requestOptions)
+      .then(response => response.text())
+      .then(result => JSON.parse(result))
+      .then(json => setCurrentPlaylist(json));
+  }
 
   const handlePlay = (track) => setCurrentTrack(track);
 
   return (
     <>
       <main>
-        {currentPlaylist.tracks_info.map((track, ix) => (
-          <PlaylistTrackRow key={ix} track={track} handlePlay={handlePlay} input_playlist={currentPlaylist.name}/>
+        <h1>{currentPlaylist.name}</h1>
+        {currentPlaylist?.tracks?.map((track, ix) => (
+          <PlaylistTrackRow 
+            key={ix} 
+            track={track} 
+            inputPlaylist={currentPlaylist}
+            handlePlay={handlePlay} 
+            refreshPlaylist={refreshPlaylist}
+          />
         ))}
       </main>
       {currentTrack && <AudioPlayer track={currentTrack} />}

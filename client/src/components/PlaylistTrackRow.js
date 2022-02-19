@@ -1,19 +1,30 @@
 import React from "react";
 import styles from "./PlaylistTrackRow.module.css";
 
-function PlaylistTrackRow({ track, handlePlay, input_playlist }) {
+function PlaylistTrackRow({ track, inputPlaylist, handlePlay, refreshPlaylist }) {
 
-  const deleteFromPlaylist = (track_id, playlist_name) => {
+  const deleteFromPlaylist = (trackId, playlistName, refreshPlaylist, playlistId) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "operation": "remove",
+      "track_id": trackId,
+      "playlist_name": playlistName
+    });
+
     const requestOptions = {
-      method: "update",
-      operation: "delete",
-      playlist_name: playlist_name,
-      track_id: track_id
+      method: 'PATCH',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
     };
 
-    const url = `http://localhost:8000/playlists/`;
-
-    fetch(url, requestOptions);
+    fetch("http://localhost:8000/playlists/p/", requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .then(() => refreshPlaylist(playlistId))
+      .catch(error => console.log('error', error));
   }
 
   return (
@@ -35,7 +46,7 @@ function PlaylistTrackRow({ track, handlePlay, input_playlist }) {
           {track.main_artists.join(", ")}
         </div>
       </div>
-      <button className={styles.activaButton} onClick={() => deleteFromPlaylist(track.id, input_playlist)}>Delete</button>
+      <button className={styles.addPlaylistInput} onClick={() => deleteFromPlaylist(track.id, inputPlaylist.name, refreshPlaylist, inputPlaylist.id)}>Delete</button>
     </div>
     
   );
