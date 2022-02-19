@@ -1,11 +1,19 @@
 import React from "react";
 import styles from "./PlaylistTrackRow.module.css";
+import { useAlert } from 'react-alert';
 
 function PlaylistTrackRow({ track, inputPlaylist, handlePlay, refreshPlaylist }) {
+  const alert = useAlert();
 
   const deleteFromPlaylist = (trackId, playlistName, refreshPlaylist, playlistId) => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+
+    const handleResponse = (res) => {
+      if (!res.ok) {
+        alert.show("Unable to remove track from playlist");
+      }
+    }
 
     const raw = JSON.stringify({
       "operation": "remove",
@@ -21,10 +29,9 @@ function PlaylistTrackRow({ track, inputPlaylist, handlePlay, refreshPlaylist })
     };
 
     fetch("http://localhost:8000/playlists/p/", requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
+      .then(response => handleResponse(response))
       .then(() => refreshPlaylist(playlistId))
-      .catch(error => console.log('error', error));
+      .catch(error => handleResponse('error', error));
   }
 
   return (

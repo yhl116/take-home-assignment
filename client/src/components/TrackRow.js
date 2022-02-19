@@ -1,8 +1,22 @@
 import React, {useState} from "react";
 import styles from "./TrackRow.module.css";
+import { useAlert } from 'react-alert';
 
 function TrackRow({ track, handlePlay }) {
   const [inputPlaylist, setInputPlaylist] = useState();
+  const alert = useAlert();
+
+  const handleResponse = (res) => {
+    if (res.ok) {
+      alert.show("Successfully added to playlist", {type: "success"});
+    } else {
+      if (res.status === 404) {
+        alert.show("The playlist does not exist");
+      } else {
+        alert.show("Unable to add to playlist");
+      }
+    }
+  }
 
   const handleSubmit = (track_id) => {
     let myHeaders = new Headers();
@@ -22,9 +36,8 @@ function TrackRow({ track, handlePlay }) {
     };
 
     fetch("http://localhost:8000/playlists/p/", requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
-      .catch(error => console.log('error', error));
+      .then(result => handleResponse(result))
+      .catch(() => alert.show("Unable to add to playlist"));
   }
 
   const handleChange = (event) => {

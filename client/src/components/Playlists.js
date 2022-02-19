@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import PlaylistRow from "./PlaylistRow";
 import styles from "./Playlists.module.css";
+import { useAlert } from 'react-alert';
 
 function Playlists() {
   const [playlists, setPlaylists] = useState([]);
   const [newPlaylist, setNewPlaylist] = useState();
+  const alert = useAlert();
 
   useEffect(() => {
     fetchPlaylists();
@@ -20,16 +22,22 @@ function Playlists() {
     setNewPlaylist(e.target.value);
   }
 
-  const handleSubmit = (track_id) => {
+  const handleResponse = (res) => {
+    if (!res.ok) {
+      alert.show("Unable to create new playlist")
+    }
+  }
+
+  const handleSubmit = () => {
     let myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    let raw = JSON.stringify({
+    const raw = JSON.stringify({
       "name": newPlaylist,
       "tracks": []
     });
 
-    let requestOptions = {
+    const requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
@@ -37,10 +45,9 @@ function Playlists() {
     };
 
     fetch("http://localhost:8000/playlists/", requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
+      .then(response => handleResponse(response))
       .then(() => fetchPlaylists())
-      .catch(error => console.log('error', error))
+      .catch(response => handleResponse(response))
   }
 
   return (

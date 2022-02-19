@@ -16,7 +16,6 @@ function App() {
 
   const handlePlay = (track) => setCurrentTrack(track);
 
-  // what is ix?
   return (
     <>
       <main className={styles.app}>

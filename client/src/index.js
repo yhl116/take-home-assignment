@@ -6,23 +6,35 @@ import Navigation from './components/Navigation';
 import Playlist from './components/Playlist';
 import Playlists from './components/Playlists';
 import reportWebVitals from './reportWebVitals';
-import Blog from './components/Blog';
+import PlaylistOutlet from './components/PlaylistOutlet';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Provider as AlertProvider } from 'react-alert'
+import AlertTemplate from 'react-alert-template-basic'
+
+const options = {
+  position: 'top center',
+  timeout: 5000,
+  offset: '10px',
+  transition: 'scale',
+  type: 'error'
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Router>
-      <Navigation />
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/playlists" element={<Blog/>}>
-          <Route path="" element={<Playlists />} />
-          <Route path=":playlistId" element={<Playlist />} />
-        </Route>
-        <Route path="/:playlistId" element={<Playlist />} />
-      </Routes>
-    </Router>
-  </React.StrictMode>,
+  <AlertProvider template={AlertTemplate} {...options}>
+    <React.StrictMode>
+      <Router>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/playlists" element={<PlaylistOutlet/>}>
+            <Route path="" element={<Playlists />} />
+            <Route path=":playlistId" element={<Playlist />} />
+          </Route>
+          <Route path="/:playlistId" element={<Playlist />} />
+        </Routes>
+      </Router>
+    </React.StrictMode>
+  </AlertProvider>,
   document.getElementById('root')
 );
 
