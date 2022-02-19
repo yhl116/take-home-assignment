@@ -1,10 +1,10 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 
-function Blog() {
+function PlaylistOutlet() {
   return (
     <Outlet />
   );
 }
 
-export default Blog;
+export default PlaylistOutlet;
