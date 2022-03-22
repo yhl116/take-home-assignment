@@ -48,6 +48,7 @@ function Playlists() {
       .then(response => handleResponse(response))
       .then(() => fetchPlaylists())
       .catch(response => handleResponse(response))
+      // .then(setNewPlaylist(""))
   }
 
   return (
@@ -59,6 +60,7 @@ function Playlists() {
         <div className={styles.createPlaylistInput}>
           <label>New Playlist:</label>
           <input type="text" name="createPlaylist" onChange={handleChange}/>
+          {/* <input type="text" name="createPlaylist" onChange={handleChange} value={newPlaylist}/> */}
           <button className="createButton" value="Create" onClick={handleSubmit}>Create</button>
         </div>
       </main>
