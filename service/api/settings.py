@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    # "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -39,6 +40,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "debug_toolbar.middleware.debugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "api.urls"
@@ -126,3 +128,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ASSETS_BASE = "https://storage.googleapis.com/tech-coding-interview-assets/"
 DSP_BASE = "http://link.epidemicsound.com/"
+
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+# ]
+
+# DEBUG_TOOLBAR_PANELS = [
+#     "debug_toolbar.panels.sql.SQLPanel",
+#     "debug_toolbar.panels.templates.TemplatesPanel",
+# ]
