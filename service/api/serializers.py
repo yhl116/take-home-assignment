@@ -29,6 +29,8 @@ class TrackSerializer(serializers.ModelSerializer):
 
 
 class GetPlaylistSerializer(serializers.ModelSerializer):
+    # todo: list playlist serializer does not need to include tracks as it is currently not needed
+
     tracks = TrackSerializer(many=True)
 
     class Meta:
