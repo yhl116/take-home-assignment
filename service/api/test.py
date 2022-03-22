@@ -9,52 +9,53 @@ class ApiTest(TestCase):
 
         self.client = Client()
 
+        self.genre_1 = Genre.objects.create(name="genre_1")
+        self.genre_2 = Genre.objects.create(name="genre_2")
+
+        self.mood_1 = Mood.objects.create(name="mood_1")
+        self.mood_2 = Mood.objects.create(name="mood_2")
+
+        self.artist_1 = Artist.objects.create(name="artist_1")
+
+        # -------------------------------------------- initialize tracks -------------------------------------------- #
         self.track_data_1 = {
             "id": "0dQiJavYYb",
             "title": "Hellonelia",
             "length": 208,
             "bpm": 0,
-            "genres": ["Indie Pop"],
-            "moods": ["Laid Back","Sentimental"],
-            "main_artists": ["Martin Hall"],
-            "featured_artists": [],
-            "audio": "https://storage.googleapis.com/tech-coding-interview-assets/0dQiJavYYb.mp3",
-            "cover_art": "https://storage.googleapis.com/tech-coding-interview-assets/0dQiJavYYb.jpg",
-            "waveform": "https://storage.googleapis.com/tech-coding-interview-assets/0dQiJavYYb.json",
-            "spotify": "http://link.epidemicsound.com/0dQiJavYYb/spotify"
         }
         self.test_track_1 = Track.objects.create(**self.track_data_1)
+        self.test_track_1.genres.add(self.genre_1)
+        self.test_track_1.mood.add(self.mood_1)
+        self.test_track_1.main_artists.add(self.artist_1)
 
         self.track_data_2= {
             "id": "8Z4PScTrns",
             "title": "Stocked",
             "length": 172,
             "bpm": 172,
-            "genres": ["Trap"],
-            "moods": ["Happy","Restless"],
-            "main_artists": ["Damma Beatz"],
-            "featured_artists": [],
-            "audio": "https://storage.googleapis.com/tech-coding-interview-assets/8Z4PScTrns.mp3",
-            "cover_art": "https://storage.googleapis.com/tech-coding-interview-assets/8Z4PScTrns.jpg",
-            "waveform": "https://storage.googleapis.com/tech-coding-interview-assets/8Z4PScTrns.json",
-            "spotify": "http://link.epidemicsound.com/8Z4PScTrns/spotify"
         }
         self.test_track_2 = Track.objects.create(**self.track_data_2)
+        self.test_track_2.genres.add(self.genre_2)
+        self.test_track_2.mood.add(self.mood_1)
+        self.test_track_2.mood.add(self.mood_2)
+        self.test_track_2.main_artists.add(self.artist_1)
 
+        # -------------------------------------------- initialize playlists -------------------------------------------- #
         self.playlist_data_1= {
             "id": 1,
             "name": "hello",
             "tracks": [self.test_track_1, self.test_track_2]
         }
-        self.test_track_2 = Playlist.objects.create(**self.playlist_data_1)
+        self.test_playlist_1 = Playlist.objects.create(**self.playlist_data_1)
 
         self.playlist_data_2= {
             "id": 2,
             "name": "world",
             "tracks": [self.test_track_2]
         }
-        self.test_track_2 = Playlist.objects.create(**self.playlist_data_2)
-    
+        self.test_playlist_2 = Playlist.objects.create(**self.playlist_data_2)
+        
 
     def test_list_tracks(self):
         """
@@ -76,28 +77,32 @@ class ApiTest(TestCase):
         self.assertEqual(tracks_data[0]['title'], self.track_data_1['title'])
         self.assertEqual(tracks_data[0]['length'], self.track_data_1['length'])
         self.assertEqual(tracks_data[0]['bpm'], self.track_data_1['bpm'])
-        self.assertEqual(tracks_data[0]['genres'], self.track_data_1['genres'])
-        self.assertEqual(tracks_data[0]['moods'], self.track_data_1['moods'])
-        self.assertEqual(tracks_data[0]['main_artists'], self.track_data_1['main_artists'])
-        self.assertEqual(tracks_data[0]['featured_artists'], self.track_data_1['featured_artists'])
-        self.assertEqual(tracks_data[0]['audio'], self.track_data_1['audio'])
-        self.assertEqual(tracks_data[0]['cover_art'], self.track_data_1['cover_art'])
-        self.assertEqual(tracks_data[0]['waveform'], self.track_data_1['waveform'])
-        self.assertEqual(tracks_data[0]['spotify'], self.track_data_1['spotify'])
+        self.assertEqual(tracks_data[0]['genres'], set(self.genre_1))
+        self.assertEqual(tracks_data[0]['moods'], set(self.mood_1))
+        self.assertEqual(tracks_data[0]['main_artists'], set(self.artist_1))
+        self.assertEqual(tracks_data[0]['featured_artists'], set())
+
+        # todo: fix assert pure properties
+        # self.assertEqual(tracks_data[0]['audio'], self.track_data_1['audio'])
+        # self.assertEqual(tracks_data[0]['cover_art'], self.track_data_1['cover_art'])
+        # self.assertEqual(tracks_data[0]['waveform'], self.track_data_1['waveform'])
+        # self.assertEqual(tracks_data[0]['spotify'], self.track_data_1['spotify'])
 
         # check track 2
         self.assertEqual(tracks_data[1]['id'], self.track_data_2['id'])
         self.assertEqual(tracks_data[1]['title'], self.track_data_2['title'])
         self.assertEqual(tracks_data[1]['length'], self.track_data_2['length'])
         self.assertEqual(tracks_data[1]['bpm'], self.track_data_2['bpm'])
-        self.assertEqual(tracks_data[1]['genres'], self.track_data_2['genres'])
-        self.assertEqual(tracks_data[1]['moods'], self.track_data_2['moods'])
-        self.assertEqual(tracks_data[1]['main_artists'], self.track_data_2['main_artists'])
-        self.assertEqual(tracks_data[1]['featured_artists'], self.track_data_2['featured_artists'])
-        self.assertEqual(tracks_data[1]['audio'], self.track_data_2['audio'])
-        self.assertEqual(tracks_data[1]['cover_art'], self.track_data_2['cover_art'])
-        self.assertEqual(tracks_data[1]['waveform'], self.track_data_2['waveform'])
-        self.assertEqual(tracks_data[1]['spotify'], self.track_data_2['spotify'])
+        self.assertEqual(tracks_data[1]['genres'], set(self.genre_2))
+        self.assertEqual(tracks_data[1]['moods'], set([self.mood_1, self.mood_2]))
+        self.assertEqual(tracks_data[1]['main_artists'], set(self.artist_1))
+        self.assertEqual(tracks_data[1]['featured_artists'], set())
+
+        # todo: fix assert pure properties
+        # self.assertEqual(tracks_data[1]['audio'], self.track_data_2['audio'])
+        # self.assertEqual(tracks_data[1]['cover_art'], self.track_data_2['cover_art'])
+        # self.assertEqual(tracks_data[1]['waveform'], self.track_data_2['waveform'])
+        # self.assertEqual(tracks_data[1]['spotify'], self.track_data_2['spotify'])
 
 
     def test_list_playlist(self):
@@ -117,11 +122,11 @@ class ApiTest(TestCase):
 
         # check playlist 1 
         self.assertEqual(playlists_data[0]['name'], self.playlist_data_1['name'])
-        self.assertEqual(playlists_data[0]['tracks'], [self.track_data_1, self.track_data_2])
+        self.assertEqual(playlists_data[0]['tracks'], set([self.track_data_1, self.track_data_2]))
 
         # check playlist 2
         self.assertEqual(playlists_data[1]['name'], self.playlist_data_2['name'])
-        self.assertEqual(playlists_data[1]['tracks'], [self.track_data_2])
+        self.assertEqual(playlists_data[1]['tracks'], set([self.track_data_2]))
 
 
     def test_retrieve_playlist(self):
@@ -148,23 +153,23 @@ class ApiTest(TestCase):
         pass
 
 
-    def test_add_playlist_tracks(self):
+    def test_add_tracks_to_playlist(self):
         pass
 
 
-    def test_add_missing_tracks(self):
+    def test_add_missing_tracks_to_playlist(self):
         pass
 
 
-    def test_add_tracks_missing_playlist(self):
+    def test_add_tracks_to_missing_playlist(self):
         pass
 
 
-    def test_add_duplicate_tracks(self):
+    def test_add_duplicate_tracks_to_playlist(self):
         pass
 
 
-    def test_remove_playlist_tracks(self):
+    def test_remove_tracks_from_playlist(self):
         pass
 
 
@@ -207,7 +212,7 @@ class ApiTest(TestCase):
         playlist_data = response_data['playlist']
         self.assertEqual(playlist_data['id'], test_playlist_data['id'])
         self.assertEqual(playlist_data['name'], test_playlist_data['name'])
-        self.assertEqual(playlist_data['tracks'], test_playlist_data['tracks'])
+        self.assertEqual(playlist_data['tracks'], set())
 
 
     def test_create_duplicate_playlist(self):
