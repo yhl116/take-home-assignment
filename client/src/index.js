@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './components/App';
 import Navigation from './components/Navigation';
 import Playlist from './components/Playlist';
 import Playlists from './components/Playlists';

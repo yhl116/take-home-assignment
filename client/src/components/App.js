@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./App.module.css";
 
-import TrackRow from "./components/TrackRow";
-import AudioPlayer from "./components/AudioPlayer";
+import TrackRow from "./TrackRow";
+import AudioPlayer from "./AudioPlayer";
 
 function App() {
   const [tracks, setTracks] = useState([]);
