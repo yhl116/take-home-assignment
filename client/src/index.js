@@ -24,14 +24,16 @@ ReactDOM.render(
     <React.StrictMode>
       <Router>
         <Navigation />
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/playlists" element={<PlaylistOutlet/>}>
-            <Route path="" element={<Playlists />} />
-            <Route path=":playlistId" element={<Playlist />} />
-          </Route>
-          <Route path="/:playlistId" element={<Playlist />} />
-        </Routes>
+        <div className='content'>
+          <Routes >
+              <Route path="/" element={<App />} />
+              <Route path="/playlists" element={<PlaylistOutlet/>}>
+                <Route path="" element={<Playlists />} />
+                <Route path=":playlistId" element={<Playlist />} />
+              </Route>
+              <Route path="/:playlistId" element={<Playlist />} />
+          </Routes>
+        </div>
       </Router>
     </React.StrictMode>
   </AlertProvider>,

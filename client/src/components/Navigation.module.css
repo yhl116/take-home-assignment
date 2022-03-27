@@ -1,5 +1,6 @@
 .app {
   padding: 4rem;
+  padding-bottom: 0px;
 }
 
 .logo {
@@ -10,6 +11,7 @@
 .menu {
   display: flex;
   margin: 2rem 0;
+  margin-bottom: 0rem;
   padding: 0;
 }
 
