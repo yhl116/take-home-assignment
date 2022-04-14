@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PlaylistRow from "./PlaylistRow";
 import styles from "./Playlists.module.css";
 import { useAlert } from 'react-alert';
+import GetAllPlaylists from "../services/GetAllPlaylists";
 
 function Playlists() {
   const [playlists, setPlaylists] = useState([]);
@@ -17,6 +18,11 @@ function Playlists() {
       .then((res) => res.json())
       .then((data) => setPlaylists(data));
   }
+
+  // const fetchPlaylists = () => {
+  //   const allPlaylistJson = await GetAllPlaylists();
+  //   setPlaylists(allPlaylistJson);
+  // }
 
   const handleChange = (e) => {
     setNewPlaylist(e.target.value);
