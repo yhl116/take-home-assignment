@@ -1,13 +1,11 @@
 import React from "react";
-import Playlists from "../Playlists";
+import TrackRow from "../TrackRow";
 import renderer from "react-test-renderer";
 
-jest.mock("../../services/GetAllPlaylists");
-
-describe("The playlists", () => {
+describe("The track row", () => {
     it("should match the snapshot", () => {
         const tree = renderer
-            .create(<Playlists />)
+            .create(<TrackRow />)
             .toJSON();
 
         expect(tree).toMatchSnapshot();
