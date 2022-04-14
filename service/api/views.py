@@ -54,6 +54,6 @@ class PlaylistViewSet(viewsets.ModelViewSet):
 
                 playlist.tracks.remove(track)
                 playlist.save()
-                return Response(status=status.HTTP_202_ACCEPTED)
+                return Response({"success": True}, status=status.HTTP_202_ACCEPTED)
 
         return Response({'message': 'Invalid update operation.'}, status=status.HTTP_400_BAD_REQUEST)
